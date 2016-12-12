@@ -40,11 +40,57 @@ Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct
 3.  Convert to Gates
 
 #### Minterms and Maxterms
+Not so sure about this table
+
+| Maxterm       | Minterm       | A | B | C |
+| :-----------: | :-----------: | : | : | : |
+| M<sub>7</sub> | m<sub>0</sub> | 0 | 0 | 0 |
+| M<sub>6</sub> | m<sub>1</sub> | 0 | 0 | 1 |
+| M<sub>5</sub> | m<sub>2</sub> | 0 | 1 | 0 |
+| M<sub>4</sub> | m<sub>3</sub> | 0 | 1 | 1 |
+| M<sub>3</sub> | m<sub>4</sub> | 1 | 0 | 0 |
+| M<sub>2</sub> | m<sub>5</sub> | 1 | 0 | 1 |
+| M<sub>1</sub> | m<sub>6</sub> | 1 | 1 | 0 |
+| M<sub>0</sub> | m<sub>7</sub> | 1 | 1 | 1 |
+
+m<sub>x</sub> == M<sub>x</sub>'
+
 ##### Minterm
-An AND expression with every input present in true or complemented form
-m<sub>0</sub>
+An __AND__ expression with every input present in true or complemented form
+
+###### Valid minterms:
+A · B' · C · D, A' · B · C' · D, A · B · C · D
+
+###### Sum-of-Minterms (SOM)
+__Union__ of minterm expressions. A way of expressing which inputs cause the output to go high.
+
 ##### Maxterm
-An OR expression with every input present in true or complemented form
+An __OR__ expression with every input present in true or complemented form
+
+###### Valid minterms:
+A + B' + C + D, A' + B + C' + D, A + B + C + D
+
+###### Product-of-Maxterms (POM)
+__intersection__ of maxterm expressions.
+
+#### Karnaugh Maps (K-Map)
+2D grid of minterms, where adjacent minterm locations in the grid differ by a single literal
+
+|                | C' · D'        | C' · D         | C · D          | C · D'         |
+| :------------: | :------------: | :------------: | :------------: | :------------: |
+| A' · B'        | m<sub>0</sub>  | m<sub>1</sub>  | m<sub>3</sub>  | m<sub>2</sub>  |
+| A' · B         | m<sub>4</sub>  | m<sub>5</sub>  | m<sub>7</sub>  | m<sub>6</sub>  |
+| A · B          | m<sub>8</sub>  | m<sub>9</sub>  | m<sub>11</sub> | m<sub>10</sub> |
+| A · B'         | m<sub>12</sub> | m<sub>13</sub> | m<sub>15</sub> | m<sub>14</sub> |
+
+Once maps are created, draw boxes over groups of high output values.
+-   Boxes bust be rectangular, and aligned with map.
+-   Number of values contained within each box must be power of 2.
+-   Boxes may overlap with each other
+-   Boxes may wrap across edges of map
+
+
+
 
 
 
