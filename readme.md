@@ -91,10 +91,53 @@ Once maps are created, draw boxes over groups of high output values.
 -   Boxes may overlap with each other
 -   Boxes may wrap across edges of map
 
+## Logic Devices
+Combinational Circuits: Multiplexers (MUX), decoders, Adders, Subtractors, Comparators. Any circuits where the outputs rely strictly on the inputs. Another category is _sequencial cirtuits_ :(.
 
+### Multiplexer
+2-to-1 MUX: S = 0, M => X; S = 1, M => Y;
 
+| X | Y | S | M |
+| : | : | : | : |
+| 0 | 0 | 0 | 0 |
+| 0 | 0 | 1 | 0 |
+| 0 | 1 | 0 | 0 |
+| 0 | 1 | 1 | 1 |
+| 1 | 0 | 0 | 1 |
+| 1 | 0 | 1 | 0 |
+| 1 | 1 | 0 | 1 |
+| 1 | 1 | 1 | 1 |
 
+4-to-1 MUX:
 
+| _s<sub>1</sub>, s<sub>0</sub>_ | m                              |
+| :----------------------------: | :----------------------------: |
+| 00                             | u                              |
+| 01                             | v                              |
+| 10                             | w                              |
+| 11                             | x                              |
+
+Verilog code:
+
+```varilog
+module mux_logic( select, d, q );
+
+input[1:0]  select;
+input[3:0]  d;
+output      q;
+
+wire        q;
+wire        not_s0, not_s1;
+wire[1:0]   select;
+wire[3:0]   d;
+
+assign q =  (~select[1] & ~select[0])   & d[0] |
+            (~select[1] & select[0])    & d[1] |
+            (select[1]  & ~select[0])   & d[2] |
+            (select[1]  & select[0])    & d[3] ;
+
+endmodule
+```
 
 
 ## Data path
