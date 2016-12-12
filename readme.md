@@ -1,4 +1,52 @@
-# CSC258 Review
+# <img src="img/overview.png" width="40px"/> CSC258 Review
+<img src="img/overview.png" width="300px"/>
+
+## Transistors 晶体管
+Logic Gates are made from transistors based on pn-junctions made from semiconductors that conduct electricity
+
+### Semiconductors
+Si and Ge
+
+#### Impurity (Doping)
+
+##### n-type
+Add Phosphorus
+
+##### p-type
+Add Boron
+
+#### MOSFET
+Metal Oxide Semiconductor Field Effect Transistors
+
+##### nMOS
+nMOS conduct when +tive voltage (5V) applied
+
+##### pMOS
+pMOS conduct when voltage is logic-zero
+
+### Logic Gates
+Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct logic-1 values batter, and nMOS transistors conduct logic-0 values batter.
+
+#### Gates Truth Table
+| A | B | AND | OR | XOR | NAND |
+| : | : | -:- | :- | -:- | :--- |
+| 0 | 0 | 0   | 0  | 0   | 1    |
+| 0 | 1 | 0   | 1  | 1   | 1    |
+| 1 | 0 | 0   | 1  | 1   | 1    |
+| 1 | 1 | 1   | 1  | 0   | 0    |
+#### Creating complex logic
+1.  Create truth tables
+2.  Express as boolean expression
+3.  Convert to Gates
+
+#### Minterms and Maxterms
+##### Minterm
+An AND expression with every input present in true or complemented form
+m<sub>0</sub>
+##### Maxterm
+An OR expression with every input present in true or complemented form
+
+
 
 
 ## Data path
