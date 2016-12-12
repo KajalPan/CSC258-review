@@ -28,12 +28,14 @@ pMOS conduct when voltage is logic-zero
 Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct logic-1 values batter, and nMOS transistors conduct logic-0 values batter.
 
 #### Gates Truth Table
-| A | B | AND | OR | XOR | NAND |
-| : | : | -:- | :- | -:- | :--- |
-| 0 | 0 | 0   | 0  | 0   | 1    |
-| 0 | 1 | 0   | 1  | 1   | 1    |
-| 1 | 0 | 0   | 1  | 1   | 1    |
-| 1 | 1 | 1   | 1  | 0   | 0    |
+
+| A | B | AND | OR  | XOR | NAND |
+| : | : | :-: | :-: | :-: | :--: |
+| 0 | 0 | 0   | 0   | 0   | 1    |
+| 0 | 1 | 0   | 1   | 1   | 1    |
+| 1 | 0 | 0   | 1   | 1   | 1    |
+| 1 | 1 | 1   | 1   | 0   | 0    |
+
 #### Creating complex logic
 1.  Create truth tables
 2.  Express as boolean expression
