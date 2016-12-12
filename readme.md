@@ -119,7 +119,7 @@ Combinational Circuits: Multiplexers (MUX), decoders, Adders, Subtractors, Compa
 
 Verilog code:
 
-```varilog
+```verilog
 module mux_logic( select, d, q );
 
 input[1:0]  select;
