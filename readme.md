@@ -98,7 +98,7 @@ Combinational Circuits: Multiplexers (MUX), decoders, Adders, Subtractors, Compa
 2-to-1 MUX: S = 0, M => X; S = 1, M => Y;
 
 | X | Y | S | M |
-| : | : | : | : |
+| - | - | - | - |
 | 0 | 0 | 0 | 0 |
 | 0 | 0 | 1 | 0 |
 | 0 | 1 | 0 | 0 |
@@ -127,7 +127,6 @@ input[3:0]  d;
 output      q;
 
 wire        q;
-wire        not_s0, not_s1;
 wire[1:0]   select;
 wire[3:0]   d;
 
@@ -138,6 +137,19 @@ assign q =  (~select[1] & ~select[0])   & d[0] |
 
 endmodule
 ```
+
+### decoders
+Translate from the output of one circuit to input of another.
+
+#### 7-segment decoder
+-   Translate from a 4-digit binary number to 7 segments of a digital display
+-   each output segment has a particular logic
+
+### Adders
+AKA Binary Adders
+-   Small circuit devices that add two digits together
+
+#### Half Adders
 
 
 ## Data path
