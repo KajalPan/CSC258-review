@@ -92,9 +92,10 @@ Once maps are created, draw boxes over groups of high output values.
 -   Boxes may wrap across edges of map
 
 ## Logic Devices
-Combinational Circuits: Multiplexers (MUX), decoders, Adders, Subtractors, Comparators. Any circuits where the outputs rely strictly on the inputs. Another category is _sequencial cirtuits_ :(.
+### Combinational Circuits
+Multiplexers (MUX), decoders, Adders, Subtractors, Comparators. Any circuits where the outputs rely strictly on the inputs. Another category is _sequencial cirtuits_ :(.
 
-### Multiplexer
+#### Multiplexer
 2-to-1 MUX: S = 0, M => X; S = 1, M => Y;
 
 |  X  |  Y  |  S  |  M  |
@@ -138,18 +139,63 @@ assign q =  (~select[1] & ~select[0])   & d[0] |
 endmodule
 ```
 
-### decoders
+#### decoders
 Translate from the output of one circuit to input of another.
 
-#### 7-segment decoder
+##### 7-segment decoder
 -   Translate from a 4-digit binary number to 7 segments of a digital display
 -   each output segment has a particular logic
 
-### Adders
+#### Adders
 AKA Binary Adders
 -   Small circuit devices that add two digits together
 
-#### Half Adders
+##### Half Adders
+Adds two bits to produce a two-bit sum, as a sum bit and a carry bit.
+
+```
+C = X · Y
+
+S = X · Y' + X' · Y
+  = X ⊕ Y
+```
+
+##### Full Adders
+Similar to Half adders, but with another input `Z`, which represents a carry-in bit (C and Z usually labeled as C<sub>out</sub> and C<sub>in</sub>)
+
+```
+C = X · Y + X · Z + Y · Z
+
+S = X ⊕ Y ⊕ Z
+```
+
+##### Ripple-Carry Binary Adder
+Full adder units chained together
+
+#### Subtractors
+1.  Take a smaller number, and invert all the digits
+2.  Add inverted number to the larger one
+3.  Add one to the result
+
+(2's complement)
+
+### Sequential Circuits
+Internal state can change over time, same input value can result different outputs
+
+#### Signed numbers
+##### Sign and Magnitude
+Sign: A separate bit for the sign, __0 for +, 1 for -__.
+
+Magnitude： Remaining bits store unsigned part of the number.
+
+e.g. 0110 if 6 while 1110 is -6
+
+
+##### 2's complement
+###### 1's complement
+(2<sup>n</sup>-1)-x, negate each individual bit.
+###### 2's complement is 1's complement + 1
+(Adding a -tive umber in 2's complement notation to the same positive number reduces a result of 0)
 
 
 ## Data path
