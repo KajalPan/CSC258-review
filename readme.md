@@ -1,7 +1,7 @@
 # <img src="img/overview.png" width="40px"/> CSC258 Review
 <img src="img/overview.png" width="300px"/>
 
-## Transistors 晶体管
+## Transistors
 Logic Gates are made from transistors based on pn-junctions made from semiconductors that conduct electricity
 
 ### Semiconductors
@@ -179,9 +179,6 @@ Full adder units chained together
 
 (2's complement)
 
-### Sequential Circuits
-Internal state can change over time, same input value can result different outputs
-
 #### Signed numbers
 ##### Sign and Magnitude
 Sign: A separate bit for the sign, __0 for +, 1 for -__.
@@ -196,6 +193,139 @@ e.g. 0110 if 6 while 1110 is -6
 (2<sup>n</sup>-1)-x, negate each individual bit.
 ###### 2's complement is 1's complement + 1
 (Adding a -tive umber in 2's complement notation to the same positive number reduces a result of 0)
+
+circuit implementation:
+![Subtractor](img/subtractor.png)
+
+##### Addition/Subtraction circuit
+![add_sub](img/add_sub.png)
+`A XOR 0` is `A`, `A XOR 1` is `!A`. Therefore if `Sub` is high, `1` is `Cin` and input of `Y` is bitwise flipped.
+
+#### Comparators
+Bitwise comparison. Most significant bit domintes.
+
+Verilog implementation:
+
+```Verilog
+module comparator_4_bit (a_gt_b, a_lt_b, a_eq_b, a, b);
+
+input [3:0] a, b;
+output a_gt_b, a_lt_b, a_eq_b;
+
+assign a_gt_b = (a > b);
+assign a_lt_b = (a < b);
+assign a_eq_b = (a == b);
+
+endmodule
+```
+
+
+
+
+### Sequential Circuits
+Internal state can change over time, same input value can result different outputs
+
+NAND, NOR gates with feedback have more interesting characteristics, which make them to storage devices.
+
+Feedback circuit example:
+![feedback_cir](img/feedback_cir.png)
+
+NAND Behavior
+
+| A                  | Q<sub>T</sub>      | Q<sub>T + 1</sub>  |
+| :----------------: | :----------------: | :----------------: |
+| 0                  | 0                  | 1                  |
+| 0                  | 1                  | 1                  |
+| 1                  | 0                  | 1                  |
+| 1                  | 1                  | 0                  |
+
+NOR Behavior
+
+| A                  | Q<sub>T</sub>      | Q<sub>T + 1</sub>  |
+| :----------------: | :----------------: | :----------------: |
+| 0                  | 0                  | 1                  |
+| 0                  | 1                  | 0                  |
+| 1                  | 0                  | 0                  |
+| 1                  | 1                  | 0                  |
+
+Storage could enter unsteady states.
+
+#### Latches
+Latches are combination of multiple gates of these types.
+![latches](img/latches.png)
+
+##### `S'R'` latch
+![S'R'latch](img/S'R'_latch.png)
+-   `S'` and `R'` are called "set" and "reset" respectively
+-   Circuits "remembers" its signal when going from `10` or `01` to `11`.
+-   Going from `00` to `11` produces unstable behavior, depending on which input changes first
+-   __00__ is forbidden state
+
+##### `SR` latch
+![SRlatch](img/SR_latch.png)
+-   `S` and `R` are called "set" and "reset" respectively
+-   Circuits "remembers" previous output when going from `10` or `01` to `00`
+-   Unstable behavior possible when inputs go from `11` to `00`
+-   __11__ is forbidden state
+
+###### Timing diagram
+```
+S   ▁▁▁▁▔▔▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁
+R   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▔▔▔▔▔▔▔▔
+Q   ▁▁▁▁▁▁▁▁▔▔▔▔▔▔▔▔▔▔▁▁▁▁▁▁
+Q'  ▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▔▔▔▔
+```
+
+Notation:
+-   T<sub>PLH</sub>: Propagation time when output goes from Low to High
+-   T<sub>PHL</sub>: Propagation time when output goes from High to Low
+
+#### Clock
+-   Timing signal to let circuit know when the output may be sampled
+-   Periodic regular signal
+-   Usually drawn as
+```
+    ┃ Voltage 5V
+    ┃▁▔▁▔▁▔▁▔▁▔▁▔▁▔▁▔▁▔▁▔
+    ┃ Voltage 0V
+    ┗━━━━━━━━━━━━━━━━━━━━━> time
+```
+
+- frequency: How many pulses occur per second, measured in Hertz (Hz)
+
+##### Clocked SR Latch
+![clocked_SR_latch](img/clocked_SR_latch.png)
+
+-   By adding another layer of NAND gates to the S'R' latch, we get a SR latch with control input
+-   Input C is often connected to a pulse signal that alternates regularly between 0 and 1 (clock)
+-   Behavior
+    -   Clock need to be high in order for the inputs to take any Effect
+
+Symbol
+```
+  ┏━━━━━━━┓
+━━┫ S     ┣━━ Q
+━━┫ C     ┃
+━━┫ R     ┣·━ Q'
+  ┗━━━━━━━┛
+```
+The NOT circil is not an extra NOT gate. We got this inversion for free.
+
+##### D latch
+![D_latch](img/D_latch.png)
+```
+  ┏━━━━━━━┓
+━━┫ D     ┣━━ Q
+━━┫ C     ┃
+  ┃       ┣━━ Q'
+  ┗━━━━━━━┛
+```
+-   By making `R` and `S` independent on a signal `D`, avoid the indeterminate state problem
+-   Value of `D` sets output `Q` low or high when `C` is high
+-   Timing issue
+    -   Any changes to its inputs are visible to the output when control signal (clock) is 1
+    -   output of a latch ___should not___ be applied directly or through combinational logic to the input of the same or another latch when they all have the same control signal
+
 
 
 ## Data path
