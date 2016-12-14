@@ -306,7 +306,7 @@ Symbol
   ┏━━━━━━━┓
 ━━┫ S     ┣━━ Q
 ━━┫ C     ┃
-━━┫ R     ┣·━ Q'
+━━┫ R     ┣○━ Q'
   ┗━━━━━━━┛
 ```
 The NOT circil is not an extra NOT gate. We got this inversion for free.
@@ -317,7 +317,7 @@ The NOT circil is not an extra NOT gate. We got this inversion for free.
   ┏━━━━━━━┓
 ━━┫ D     ┣━━ Q
 ━━┫ C     ┃
-  ┃       ┣━━ Q'
+  ┃       ┣○━ Q'
   ┗━━━━━━━┛
 ```
 -   By making `R` and `S` independent on a signal `D`, avoid the indeterminate state problem
@@ -326,6 +326,66 @@ The NOT circil is not an extra NOT gate. We got this inversion for free.
     -   Any changes to its inputs are visible to the output when control signal (clock) is 1
     -   output of a latch ___should not___ be applied directly or through combinational logic to the input of the same or another latch when they all have the same control signal
 
+#### Flip-Flops
+Triggered only on a edge of the clock
+
+##### D Flip-Flop
+###### Master-slave
+A D-latch (master) is connected to an SR-latch (slave) with complementary control signals.
+```
+Negedge-triggered DFF
+      ┏━━━━━━━┓          ┏━━━━━━━┓
+D ━━━━┫ D   Q ┣━━━━━━━━━━┫ S1  Q ┣━━ Q
+C ━━┳━┫ C     ┃    ┏━━━━━┫ C     ┃
+    ┃ ┃     Q'┣○━━━╋━━━━━┫ R1  Q'┣○━ Q'
+    ┃ ┗━━━━━━━┛    ┃     ┗━━━━━━━┛
+    ┗━━━▷○━━━━━━━━━┛
+```
+
+```
+Posedge-triggered DFF
+       ┏━━━━━━━┓          ┏━━━━━━━┓
+D ━━━━━┫ D   Q ┣━━━━━━━━━━┫ S1    ┣━━ Q
+C ━▷○┳━┫ C     ┃    ┏━━━━━┫ C     ┃
+     ┃ ┃     Q'┣○━━━╋━━━━━┫ R1    ┣○━ Q'
+     ┃ ┗━━━━━━━┛    ┃     ┗━━━━━━━┛
+     ┗━━━▷○━━━━━━━━━┛
+```
+Most commonly-used flip-flop
+
+##### Other Flip-Flops
+###### T Flip-Flop
+Toggles value whenever input T is high
+-   If `T` is `1` @ posedge, output `Q` will toggle
+-   If `T` is `0` @ negedge, output `Q` holds on prior state
+###### JK Flip-Flop
+-   If `J` and `K` are  `0`, maintain output
+-   If `J` is `0` and `K` is `1`, set output to `0`
+-   If `J` is `1` and `K` is `0`, set output to `1`
+-   If `J` and `K` are `1`, toggle output value
+
+##### Timing signal restrictions
+-   Setup time: input should be stable for some time before active clock edge
+-   Hold time: input should be stable for some time immediately after the active clock edge
+-   Time period between two active clock edges cannot be shorter than __longest propagation delay__ between any two flip-flops + __setup time__ of the flip-flop
+
+##### Reset inputs
+-   A way to initialize flip-flop states
+-   reset signal resets FF output to 0 (unrelated to R of SE latch)
+-   Synchronous reset: only on posedge
+-   Asynchronous reset: output is set to 0 immediately, independent of the clock signal
+-   often also called __Clear__
+
+### Sequential Circuit Design
+#### Register
+Allow storage of information (CPU has many physical registers)
+##### Shift registers
+![shift_reg](img/shift_reg.png)
+A series of DFF can store a multi-bit value (e.g a 16-bit int)
+-   Data can be shifted into this register one bit at a time, over 16 clock cycles
+
+##### Load Registers
+![load_reg](img/load_reg.png)
 
 
 ## Data path
