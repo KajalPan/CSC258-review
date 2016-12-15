@@ -353,11 +353,26 @@ C ━▷○┳━┫ C     ┃    ┏━━━━━┫ C     ┃
 ```
 Most commonly-used flip-flop
 
+Verilog implementation
+
+```verilog
+reg [1:0] q;
+
+always @ (posedge clk, negedge reset_n)
+begin
+    if (reset_n == 1'b0)
+        q <= 2'b00;
+    else
+        q <= d;
+end
+```
+
 ##### Other Flip-Flops
 ###### T Flip-Flop
 Toggles value whenever input T is high
 -   If `T` is `1` @ posedge, output `Q` will toggle
 -   If `T` is `0` @ negedge, output `Q` holds on prior state
+
 ###### JK Flip-Flop
 -   If `J` and `K` are  `0`, maintain output
 -   If `J` is `0` and `K` is `1`, set output to `0`
@@ -386,7 +401,112 @@ A series of DFF can store a multi-bit value (e.g a 16-bit int)
 
 ##### Load Registers
 ![load_reg](img/load_reg.png)
+Load reg's values all at once (e.g. a 4-bit load reg)
+-   To control when this reg is allowed to load value, use __DFF with enable__
+![DFF_enable](img/DFF_enable.png)
 
+```
+  ┏━━━━━━━┓
+━━┫ D   Q ┣━━ Q
+━━┫ EN    ┃
+━━┫ ▷   Q'┣○━ Q'
+  ┗━━━━━━━┛
+```
+
+###### Register with Parallel Load
+![parallel_load_reg](img/parallel_load_reg.png)
+Maintain value in reg until overwritten by setting EN high
+
+#### Counters
+##### Asynchronous Counter
+-   Connect output of one FF to the input of the next => ripple counter
+-   Cheap to implement
+-   Unreliable for Timing
+##### Synchronous Counter
+-   Avoids false counts by having all FFs connected to the same clock
+-   Example: 3-bit Counter
+
+| Q<sub>2</sub>      | Q<sub>1</sub>      | Q<sub>0</sub>      |
+| :----------------: | :----------------: | :----------------: |
+| 0                  | 0                  | 0                  |
+| 0                  | 0                  | 1                  |
+| 0                  | 1                  | 0                  |
+| 0                  | 1                  | 1                  |
+| 1                  | 0                  | 0                  |
+| 1                  | 0                  | 1                  |
+| 1                  | 1                  | 0                  |
+| 1                  | 1                  | 1                  |
+
+-   Q<sub>0</sub> => every cycle
+-   Q<sub>1</sub> => When present state of Q<sub>0</sub> is 1
+-   Q<sub>2</sub> => When present state of Q<sub>1</sub> is 1
+
+### State Machine
+Designing with flip-flops
+-   Sequential circuits are the basis for memory, instruction processing and any other operation that requires the circuit to remember __past data values__
+-   The __past data values__ are also called the __states__ of the circuit.
+-   use combinational logic to determine what the __next state__ of the system should be, based on the __present state__ and __current input values__.
+
+#### State tables
+helps to illustrate how the state of the circuit change with various input values.
+
+| Present State      | Enable             | Next State         |
+| :----------------: | :----------------: | :----------------: |
+| zero               | 0                  | zero               |
+| zero               | 1                  | one                |
+| one                | 0                  | one                |
+| one                | 1                  | two                |
+| two                | 0                  | two                |
+| two                | 1                  | three              |
+| three              | 0                  | three              |
+| three              | 1                  | four               |
+| four               | 0                  | four               |
+| four               | 1                  | five               |
+| five               | 0                  | five               |
+| five               | 1                  | six                |
+| six                | 0                  | six                |
+| six                | 1                  | seven              |
+| seven              | 0                  | seven              |
+| seven              | 1                  | zero               |
+
+#### Finite State Machines (FSM)
+Models for actual circuit Design
+-   A finite set of states
+-   A finite set of transitions between states, triggered by inputs to the state machine
+-   output values that are associated with each state or each transition
+-   Start and end states for the state machine
+
+Steps
+1.  State diagram
+2.  Derive state table from state diagram
+3.  Assign FF to each state
+4.  rewrite state table with FF values
+5.  Circuit design (K-Map), derive combinational circuit for outputs and for each FF output
+
+##### Implementation
+###### Moore vs. FSM types
+Moore:
+-   output of FSM depend solely on the current FSM state
+-   output can change only when state changes
+-   in state diagram, outputs are drawn within each circle
+
+Mealy:
+-   output depend on the current FSM state and __the inputs__
+-   output can change ass soon as the input changes even if state did not change
+-   In state diagram, outputs are drawn on transition
+
+```verilog
+reg [1:0] present_state;
+
+always @ (posedge clk, negedge reset_n)
+begin
+    if (reset_n == 1'b0)
+        present_state <= 2'b00;
+    else
+        present_state <= next_state;
+end
+```
+``
 
 ## Data path
 ## Controller
