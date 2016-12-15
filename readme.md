@@ -647,7 +647,7 @@ If want to freeze datapath, change `go` to zero
     .text
     main:   la $st1, ARRAY1         # initialize array address
             addi $t0, $zero, 1      # $t0 will contain 1
-            add $t3, $zero, 101     # store comparator 101 in reg $t3
+            addi $t3, $zero, 101     # store comparator 101 in reg $t3
 
     LOOP:   beq $t0, $t3, END       # compare $t1
             sw  $t0, 0($t1)         # store word (integer)
