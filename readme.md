@@ -506,10 +506,105 @@ begin
         present_state <= next_state;
 end
 ```
-``
 
-## Data path
-## Controller
+###### Combinational circuit A in verilog
+
+```verilog
+reg [1:0] present_state, next_state;
+
+always @ (*)
+    case (present_state)
+        A: next_state = ...;
+        ...
+        default: next_state = ...;
+    endcase
+```
+
+User symbolic names for states and not hard-coded constants>
+
+```verilog
+localparam [1:0] A = 2'b00, B = 2'b01;
+```
+
+###### State flip-flops
+
+```verilog
+always @ (posedge clock, negedge resetn)
+begin
+    if (resetn == 1'b0)
+        present_state <= A;
+    else
+        present_state <= next_state
+end
+```
+
+`present_state` is outputs `Q` of our flip-flops  
+`next_state` is inputs `D` of out FF (outputs from combinational circuit A)
+
+###### FSM's Outputs (Combinational Circuit B)
+Implement either with assign statements or an `always @(*)` block
+
+On Quartus, use __State Machine Viewer__ to observe state table and state diagram, and user __Technology Map Viewer__ to see function/truth table
+
+###### One-Hot Assignment for FSM
+-   need as many FFs as FSM states
+-   given `n` FSM states, each state code will have `n-1` bits zero and `1` bit one
+-   Simpler, faster logic due to simpler boolean expressions
+-   Key points
+    -   uniquely identify any state just by specifying the 1 flip-flop whose output will be high
+
+### Midterm review
+ Assume you have 5 bits, what is the range of numbers you can represent in 2’s complement?  
+ -15 ~ 15 ?
+
+## Processor
+![processor](img/processor.png)
+
+### Datapath
+Where all data computations take place
+
+### Control unit
+A big FSM that instructs the datapath to perform all appropriate actions.
+
+#### Example: compute x<sup>2</sup> + 2x
+![x<sup>2</sup> + 2x](img/x2+2x.png)
+1.  Identify the various datapath components
+2.  Identify which signals will be FSM inputs, FSM outputs
+3.  Come up with a state diagram/state table
+4.  Implement control components and datapath components in verilog
+
+##### Control Unit Interface
+-   System Wide signals
+    -   `clock`
+    -   `resetn`
+-   Output datapath control signal
+    -   `SelxA`, `SelAB` => control MUX outputs
+    -   `ALUop` => control ALU operation
+    -   `LdRA`, `LdRB` => load a new value into reg `RA`, `RB`
+-   Computation done signal
+    -   `done`
+-   Computation start signal
+    -   `go`
+
+##### Sequence of Operations
+| Cycle #        | RA             | RB             | Goal                               | SelxA          | SelAB          | ALUop          | LdRA           | LdRB           |
+| :------------- | :------------- | :------------- | :--------------------------------- | :------------- | :------------- | :------------- | :------------- | :------------- |
+| 1              | 0              | 0              | Load x to RA, RB                   | 0              | Don't care     | 0 (+)          | 1              | 1              |
+| 2              | x              | x              | Do x<sup>2</sup> and load into RB  | Don't care     | Don't care     | 1 (*)          | 0              | 1              |
+| 3              | x              | x<sup>2</sup>  | Do 2x and replace result in RA     | Don't care     | 0              | 0 (+)          | 1              | 0              |
+| 4              | 0              | 0              | Compute x<sup>2</sup> + 2x (final) | 1              | 1              | 0 (+)          | 0              | 0              |
+
+After:
+-   Cycle 1: x loaded to RA, RB
+-   Cycle 2: x<sup>2</sup> loaded to RB
+-   Cycle 3: 2x loaded to RA
+-   Cycle 4: x<sup>2</sup> + 2x calculated
+
+##### `go`
+If want to freeze datapath, change `go` to zero
+-   stay in the same state if `go` is logic-0
+-   Do not modify contents of registers
+
 ## Assembly Language
 - Fibonacci.asm
 
@@ -526,4 +621,39 @@ end
     #END:	sb $t4, RES		# store result (we'll talk about this next week)
     END: 	j END			# infinite loop. just for demonstration!
 
+    ```
+
+-   Store numbers 1 to 100 to an array, every element is int, starts at location indicated by `ARRAY1`
+
+    ```nasm
+                            # reserve space, store numbers 1 to 100 to elements
+                            # an array starting at address indicared by label
+                            # ARRAY1
+                            #
+                            # for (i = 1; i <= 100; i++);
+                            #   array[i - 1] = i;
+                            #
+                            # Alernative
+                            # i = 1
+                            # while (i != 100)
+                            #   a[i - 1] = i;
+                            #   i = i + 1;
+                            #
+                            # $t0 holds i
+                            # $t1 keep track of address array element
+    .data
+    ARRAY1: .space 400
+
+    .text
+    main:   la $st1, ARRAY1         # initialize array address
+            addi $t0, $zero, 1      # $t0 will contain 1
+            add $t3, $zero, 101     # store comparator 101 in reg $t3
+
+    LOOP:   beq $t0, $t3, END       # compare $t1
+            sw  $t0, 0($t1)         # store word (integer)
+            addi $t0, $t0, 1        # increment i
+            addi $t1, $t1, 4        # update memory address
+            j LOOP
+
+    END:    j END                   # DONE
     ```
