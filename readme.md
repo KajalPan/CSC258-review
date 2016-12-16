@@ -555,10 +555,15 @@ On Quartus, use __State Machine Viewer__ to observe state table and state diagra
 
 ### Midterm review
  Assume you have 5 bits, what is the range of numbers you can represent in 2’s complement?  
- -15 ~ 15 ?
+ -16 ~ 15 ?
 
 ## Processor
 ![processor](img/processor.png)
+-   `PC`: Program counter, holds address of the current instruction
+-   `zero` in `ALU` changed to `CMP`
+-   `IorD`
+    -   instruction or data
+
 
 ### Datapath
 Where all data computations take place
@@ -605,7 +610,194 @@ If want to freeze datapath, change `go` to zero
 -   stay in the same state if `go` is logic-0
 -   Do not modify contents of registers
 
+### Microprocessors
+-   Registers to store values
+-   Adders and shifters to process data
+-   Finite state machines to control the process
+
+#### Arithmetic Logic Unit (ALU)
+![ALU](img/ALU.png)
+Responsible for processing of all data values in a basic CPU.
+
+##### Inputs
+-   `S` in this ALU is a 3-bit vector (S<sub>2</sub>S<sub>1</sub>S<sub>0</sub>) that selects ALU operation.
+    -   S<sub>2</sub> is a mode select bit, indicating whether the ALU is in arithmetic or logic mode
+    -   S<sub>1</sub>S<sub>0</sub> further specify the operations in each mode
+-   Carry bit C<sub>in</sub> is used in operations such as incrementing an input value or the overall result.
+
+##### Outputs
+V,C,N,Z indicate special conditions in the arithmetic result:
+-   V: overflow condition, used to detect errors in signed arithmetic
+-   C: carry-out bit, used to detect errors in unsigned arithmetic
+-   N: negative indicator (sign bit flag)
+-   Z: zero-condition indicator, set if result of operation is zero
+
+#### Multiplication
+Approaches:
+-   Layered rows of adder units
+-   An adder/shifter circuit
+-   Booth's Algorithm
+
+##### Booth's Algorithm
+-   X * 001111 = X * 010000 - X * 1
+
+
+### Memory and Registers
+Registers: Small number of fast memory unit that allow multiple values to be written simultaneously
+
+Main memory: Larger grid of memory cells that are used to  store the main information to be processed by the CPU
+
+`m` address width:
+-   2<sup>m</sup> rows
+-   each row contains `n` bits (data width)
+-   size of memory is 2<sup>m</sup> * n bits => 2<sup>m</sup> * n / 8 Bytes
+
+#### Memory capacity:
+measured in Bytes (1 Byte is 8 bits)
+-   KB (kilobyte) = 1024 Bytes = 2<sup>10</sup> Bytes
+-   MB (Megabyte) = 1024 KB = 2<sup>20</sup> Bytes
+-   GB (Gigabyte) = 1024 MB = 2<sup>30</sup> Bytes
+
+#### RAM Memory Interface
+-   Address port (input): Address-width bit Wide
+-   Write Enable (input):
+    -   Memory write: Memory is modified if 1
+    -   Memory read: Memory is read if 0
+-   Data In (input): data to write if writeEn is 1
+-   Data out (output): data read from memory if writeEn is 0
+
+### Processor datapath
+#### Program Counter (PC)
+Store location of the current instruction
+
+##### Updating PC
+-   for instructions that are 4B long (32 bits), PC need to be incremented by 4, so that next instruction is fetched and executed
+-   can also be updated via result of ALU operation
+-   every instruction updates PC
+
+#### Instruction fetch
+Bring the instruction the processor should execute next from memory and place it into the instruction register
+-   Operation: read from memory
+-   use memory address as content of PC register
+-   data read out:
+    -   instruction we need to execute
+    -   load instruction into instruction register
+
+#### Decoding instruction
+meaning of instruction specified in Instruction Set Architecture (ISA)
+-   We will be using MIPS illustrate
+
+R-type MIPS instruction have 3-operands:
+-   2 source register
+    -   acting as data input
+-   1 destination register
+    -   acting as data output
+
+Load-store architecture
+-   only specific instruction allow memory access
+-   cannot add a value with a present value in the memory. need to load that into a register first
+
+Example: unsigned subtraction (subu $d, $s, $t)
+```
+00000000 00000001 00111000 00100011
+000000ss sssttttt ddddd000 00100011
+```
+
+First 6 bits are `opcode`, specifies the instruction type
+
+
 ## Assembly Language
+MIPS instruction types
+    ![instruction](img/instruction.png)
+
+-   R-type (register-type) operates on registers
+    -   three regs: two source regs (`rs` & `rt`) and one destination reg (`rd`)
+    -   field coded with all 0 bits when not used
+    -   opcode is 000000
+    -   function field (last 6 digit) specifies type of operation being performed
+
+-   I-type (immediate?)
+    -   a 16-bit immediate field, used for immediate operand, a branch target offset or a displacement for a memory operand
+
+-   J-type
+    -   only two instructions:
+        -   jump (`j`)
+        -   jump and link (`jal`)
+    -   use 26-bit coded address field to specify target of the jump
+
+### Control flow
+Some operations require the code to branch to one section of code or another (if/else)m and some require the code to jump back and repeat a section of code again (for/while).
+
+#### Branch instructions
+
+| instruction    | Opcode         | Syntax         | Operation                      |
+| :------------- | :------------- | :------------- | :----------------------------- |
+| `beq`          | 000100         | $s, $t, label  | if ($s == $t) pc += SE(i) << 2 |
+| `bgtz`         | 000111         | $s, label      | if ($s > 0) pc += SE(i) << 2   |
+| `blez`         | 000110         | $s, label      | if ($s <= 0) pc += SE(i) << 2  |
+| `bne`          | 000101         | $s, $t, label  | if ($s != $t) pc += SE(i) << 2 |
+
+-   key for if statement and loops
+-   labels are memory locations
+-   addresses are assigned to each label at compile time
+-   if branch cond is true, CMP output of ALU is set to 1
+    -   an input to and AND gate in our datapath along with `PCWriteCond`
+-   `i` is an offset in # of instructions between the location of the current instructions
+    -   instruction the processor should fetch next `i` instructions before (if i < 0) or after (if i > 0) from current branch instruction
+
+#### Loop in MIPS
+Loop in C
+
+```c
+for ( <init>; <cond>; <update> ) {
+    <for body>
+}
+```
+
+Loop in asm
+
+```nasm
+        <init>
+START:  if (!<cond>) branch to END
+        <for body>
+UPDATE: <update>
+        jump to START
+END:
+```
+
+example:
+```nasm
+        # $t0 = i, $t1 = j
+        add $t1, $zero, $zero       # set t1 to 0
+        addi $t0, $zero, 1          # set t0 to 1
+        addi $t9, $zero, 100        # set $t9 to 100
+START:  slt $t7, $t0, $t9           # set t7 to 1 if i < 100
+        beq $t7, $zero, END         # branch if !(i < 100)
+        add $t1, $t1, $t0           # j = j + 1
+UPDATE: addi $t0, $t0, 1            # i++
+        j START
+END:
+```
+
+#### Load & Store instructions
+
+| instruction    | Opcode         | Syntax         | Operation                      |
+| :------------- | :------------- | :------------- | :----------------------------- |
+| `lb`           | 100000         | $t, i ($s)     | $t = SE (MEM [$s + SE(i)]:1)   |
+| `lbu`          | 100100         | $t, i ($s)     | $t = ZE (MEM [$s + SE(i)]:1)   |
+| `lh`           | 100001         | $t, i ($s)     | $t = SE (MEM [$s + SE(i)]:2)   |
+| `lhu`          | 100101         | $t, i ($s)     | $t = ZE (MEM [$s + SE(i)]:2)   |
+| `lw`           | 100011         | $t, i ($s)     | $t = MEM [$s + SE(i)]:4        |
+| `sb`           | 101000         | $t, i ($s)     | MEM [$s + SE(i)]:1 = LB ($t)   |
+| `sh`           | 101001         | $t, i ($s)     | MEM [$s + SE(i)]:2 = LH ($t)   |
+| `sw`           | 101011         | $t, i ($s)     | MEM [$s + SE(i)]:4 = $t        |
+
+-   `b`: byte
+-   `h`: half word
+-   `w`: word
+-   `SE`: Sign-Extension
+-   `ZE`: Zero-Extension
+
 - Fibonacci.asm
 
     ```nasm
@@ -626,21 +818,22 @@ If want to freeze datapath, change `go` to zero
 -   Store numbers 1 to 100 to an array, every element is int, starts at location indicated by `ARRAY1`
 
     ```nasm
-                            # reserve space, store numbers 1 to 100 to elements
-                            # an array starting at address indicared by label
-                            # ARRAY1
-                            #
-                            # for (i = 1; i <= 100; i++);
-                            #   array[i - 1] = i;
-                            #
-                            # Alernative
-                            # i = 1
-                            # while (i != 100)
-                            #   a[i - 1] = i;
-                            #   i = i + 1;
-                            #
-                            # $t0 holds i
-                            # $t1 keep track of address array element
+    # reserve space, store numbers 1 to 100 to elements
+    # an array starting at address indicared by label
+    # ARRAY1
+    #
+    # for (i = 1; i <= 100; i++);
+    #   array[i - 1] = i;
+    #
+    # Alernative
+    # i = 1
+    # while (i != 100)
+    #   a[i - 1] = i;
+    #   i = i + 1;
+    #
+    # $t0 holds i
+    # $t1 keep track of address array element
+
     .data
     ARRAY1: .space 400
 
@@ -656,4 +849,26 @@ If want to freeze datapath, change `go` to zero
             j LOOP
 
     END:    j END                   # DONE
+    ```
+    -   `$t, i($s)` specifies we are accessing `MEM[$s + SE(i)]`
+-   store content of reg $t2 to memory location with address ($t1 + 8)
+    1.   write assembly code `sw $s2, 8($t1)`
+
+
+## Past test
+### 2016
+-   Q5
+    ```verilog
+    module OptionalSwap16(a, b, clk, swap, c, d)
+
+        input [15:0] a, b;
+        input clk, swap;
+        output reg [15:0] c, d;
+        reg [15:0] a_out, b_out;
+        wire [15:0] mux1_out, mux2_out;
+
+        always @ (posedge clk) begin
+            a_out <= a;
+            b_out <=b;
+            c
     ```
