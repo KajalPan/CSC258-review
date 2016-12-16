@@ -798,6 +798,39 @@ END:
 -   `SE`: Sign-Extension
 -   `ZE`: Zero-Extension
 
+#### Memory Segments
+`.data`
+-   Indicates the start of all static data declarations
+-   usually placed above `.text` segment in `.asm` file
+-   Form: `label    type    value`
+    -   Example:
+        -   `var1:      .word   3`
+        -   `array1:    .byte   'a', 'b'`
+        -   `array2:    .space  40`
+
+`.text`
+-   Indicates the start of the program instructions
+-   label for the first instruction to run when executing the program is called main
+-   `la $d, label` loads data from `label` to `$d`
+
+#### call function
+`jal FUNCTION_LABEL`
+-   `jal` is J-Type instruction
+-   updates register $31 ($ra, return address register) and also PC
+-   After executed, $ra contains the address of the instruction __after__ the calling site
+
+`jr $ra`
+-   the next PC is the address in $ra
+-   `jal` instruction sets $ra
+
+#### Registers
+-   Registers 2-3 ($v0, $v1): return values
+-   Registers 4-7 ($a0-$a3): function arguments
+
+#### Stack
+-   `lw $t0, 0($sp)`: pop that word off the Stack
+-   `sw $t0, 0($sp)`: push
+
 - Fibonacci.asm
 
     ```nasm
