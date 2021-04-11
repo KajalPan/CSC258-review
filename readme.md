@@ -1,6 +1,6 @@
 # <img src="img/overview.png" width="40px"/> CSC258 Review
 <img src="img/overview.png" width="300px"/>
-
+# LECTURE 1
 ## Transistors
 Logic Gates are made from transistors based on pn-junctions made from semiconductors that conduct electricity
 
@@ -15,14 +15,25 @@ Add Phosphorus
 ##### p-type
 Add Boron
 
+##### p-n Junctions
+Elec from n section fill holes in p section, cancelling each other-> Depletion layer (no free carriers).
+Doping atoms that remain create an electric field. 
+Diffusion: Electrons initial movement (attracted by holes) -> increase width of depletion layer.
+Drift: Electrons movement drawn by electric field -> decrease width of depletion layer.
+Eventually equilibrium -> certain width reached.
+
+#### Apply Voltage to PN-Junction
+Forward Bias: Positive voltage to P -> depletion layer narrower -> easy to travel therefore like switch is CONNECTED
+Reverse Bias: Positive voltage to N -> depletion layer wider -> hard to travel therefore like switch is DISCONNECTED
+
 #### MOSFET
 Metal Oxide Semiconductor Field Effect Transistors
 
 ##### nMOS
-nMOS conduct when +tive voltage (5V) applied
+nMOS conduct when +ve voltage (5V) applied (carriers are electrons), N-P-N
 
 ##### pMOS
-pMOS conduct when voltage is logic-zero
+pMOS conduct when -ve voltage (0V) applied (carriers are holes), P-N-P
 
 ### Logic Gates
 Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct logic-1 values batter, and nMOS transistors conduct logic-0 values batter.
