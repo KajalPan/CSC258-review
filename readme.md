@@ -53,22 +53,24 @@ Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct
 3.  Convert to Gates
 
 #### Minterms and Maxterms
-(Here 0 and 1 represents X' and X respectively for an input X)
+(For MINTERM: 0 and 1 represents X' and X respectively for an input X)
+(For MAXTERM: 0 and 1 represents X and X' respectively for an input X)
 | Maxterm       | Minterm       | A             | B             | C             |
 | :-----------: | :-----------: | :-----------: | :-----------: | :-----------: |
-| M<sub>7</sub> | m<sub>0</sub> | 0             | 0             | 0             |
-| M<sub>6</sub> | m<sub>1</sub> | 0             | 0             | 1             |
-| M<sub>5</sub> | m<sub>2</sub> | 0             | 1             | 0             |
-| M<sub>4</sub> | m<sub>3</sub> | 0             | 1             | 1             |
-| M<sub>3</sub> | m<sub>4</sub> | 1             | 0             | 0             |
-| M<sub>2</sub> | m<sub>5</sub> | 1             | 0             | 1             |
-| M<sub>1</sub> | m<sub>6</sub> | 1             | 1             | 0             |
-| M<sub>0</sub> | m<sub>7</sub> | 1             | 1             | 1             |
+| M<sub>0</sub> | m<sub>0</sub> | 0             | 0             | 0             |
+| M<sub>1</sub> | m<sub>1</sub> | 0             | 0             | 1             |
+| M<sub>2</sub> | m<sub>2</sub> | 0             | 1             | 0             |
+| M<sub>3</sub> | m<sub>3</sub> | 0             | 1             | 1             |
+| M<sub>4</sub> | m<sub>4</sub> | 1             | 0             | 0             |
+| M<sub>5</sub> | m<sub>5</sub> | 1             | 0             | 1             |
+| M<sub>6</sub> | m<sub>6</sub> | 1             | 1             | 0             |
+| M<sub>7</sub> | m<sub>7</sub> | 1             | 1             | 1             |
 
 m<sub>x</sub> == M<sub>x</sub>'
 
 ##### Minterm
 An __AND__ expression with every input present in true or complemented form
+Each minterm corrosponds to single HIGH output in table. SOP (Sum of Products).
 
 ###### Valid minterms:
 A · B' · C · D, A' · B · C' · D, A · B · C · D
@@ -78,6 +80,7 @@ __Union__ of minterm expressions. A way of expressing which inputs cause the out
 
 ##### Maxterm
 An __OR__ expression with every input present in true or complemented form
+Each maxterm corrosponds to single LOW output in table. POS (Product of Sums).
 
 ###### Valid maxterms:
 A + B' + C + D, A' + B + C' + D, A + B + C + D
@@ -86,22 +89,23 @@ A + B' + C + D, A' + B + C' + D, A + B + C + D
 __intersection__ of maxterm expressions.
 
 #### Karnaugh Maps (K-Map)
-2D grid of minterms, where adjacent minterm locations in the grid differ by a single literal
+2D grid of minterms, where adjacent minterm locations in the grid differ by a single literal. Use to find the simplest expresion for a circuit (lowest Gate Cost).
 
 |                | C' · D'        | C' · D         | C · D          | C · D'         |
 | :------------: | :------------: | :------------: | :------------: | :------------: |
 | A' · B'        | m<sub>0</sub>  | m<sub>1</sub>  | m<sub>3</sub>  | m<sub>2</sub>  |
 | A' · B         | m<sub>4</sub>  | m<sub>5</sub>  | m<sub>7</sub>  | m<sub>6</sub>  |
-| A · B          | m<sub>8</sub>  | m<sub>9</sub>  | m<sub>11</sub> | m<sub>10</sub> |
-| A · B'         | m<sub>12</sub> | m<sub>13</sub> | m<sub>15</sub> | m<sub>14</sub> |
+| A · B          | m<sub>12</sub> | m<sub>13</sub> | m<sub>15</sub> | m<sub>14</sub> |
+| A · B'         | m<sub>8</sub>  | m<sub>9</sub>  | m<sub>11</sub> | m<sub>10</sub> |
 
 Once maps are created, draw boxes over groups of high output values.
--   Boxes bust be rectangular, and aligned with map.
+-   Boxes must be rectangular, and aligned with map.
 -   Number of values contained within each box must be power of 2.
 -   Boxes may overlap with each other
 -   Boxes may wrap across edges of map
+Minterms: group entries with 1. Maxterms: group entries with 0.
 
-## Logic Devices
+## Logical Devices
 ### Combinational Circuits
 Multiplexers (MUX), decoders, Adders, Subtractors, Comparators. Any circuits where the outputs rely strictly on the inputs. Another category is _sequencial cirtuits_ :(.
 
