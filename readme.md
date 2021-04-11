@@ -53,8 +53,7 @@ Are made by a combination of pMOS and nMOS Transistors. pMOS transistors conduct
 3.  Convert to Gates
 
 #### Minterms and Maxterms
-Not so sure about this table
-
+(Here 0 and 1 represents X' and X respectively for an input X)
 | Maxterm       | Minterm       | A             | B             | C             |
 | :-----------: | :-----------: | :-----------: | :-----------: | :-----------: |
 | M<sub>7</sub> | m<sub>0</sub> | 0             | 0             | 0             |
@@ -80,7 +79,7 @@ __Union__ of minterm expressions. A way of expressing which inputs cause the out
 ##### Maxterm
 An __OR__ expression with every input present in true or complemented form
 
-###### Valid minterms:
+###### Valid maxterms:
 A + B' + C + D, A' + B + C' + D, A + B + C + D
 
 ###### Product-of-Maxterms (POM)
