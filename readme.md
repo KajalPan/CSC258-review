@@ -572,12 +572,18 @@ On Quartus, use __State Machine Viewer__ to observe state table and state diagra
  -16 ~ 15 ?
 
 ## Processor
+### ALU
+Propagation Delay: find critical path (largest number of gates) and sum the gates -> UPPER bounded (shorten critical path)
+Contamination Delay: find the short path (smallest num of gates) and sum the gates -> LOWER bounded (want to reliably sample values)
+Tri-state buffer: has a write enable that can be 1 or 0.
+-> Can have tristate A to Y (which is input "D" to output "Y") or tristate enable to Y (input "S" to output "Y").
+Calculate D-to-Y and S-to-Y propagation for each circuit in the comparison. 
+
 ![processor](img/processor.png)
 -   `PC`: Program counter, holds address of the current instruction
 -   `zero` in `ALU` changed to `CMP`
 -   `IorD`
     -   instruction or data
-
 
 ### Datapath
 Where all data computations take place
