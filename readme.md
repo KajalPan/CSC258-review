@@ -672,6 +672,22 @@ Main memory: Larger grid of memory cells that are used to  store the main inform
 -   each row contains `n` bits (data width)
 -   size of memory is 2<sup>m</sup> * n bits => 2<sup>m</sup> * n / 8 Bytes
 
+#### Data Bits:
+- Multiple components can read from a bus but only one can write to a bus at a time. Each component has a tri-state buffer.
+- Each component has a tri-state buffer that feeds into bus. When not reading or writing (1 or 0), buffer drives high impedance onto the bus.
+- Memory (houses most data values) vs Registers (used to execute an instruction)
+
+#### Cache: 
+- structure that makes it appear that memory is closer than it is. A cache block is brought to cache holding the value loaded and values near it. 
+- relys on SPATIAL + TEMPORAL locality. Value/ values near the one just used are likely to be used soon.
+- key terms: Address (gets hashed to a set), tag, block, set, associativity, hit rate/ miss rate, Average Memory Access Time (AMAT)
+- Cache types (the cache has a few sets of blocks):
+-  1. direct mapped: each set has one block (use part of the cache as indedx into it. If 16 storage locations, 16 bits from address will be used an index)
+-  2. N-way set associative: each set has N blocks (can store N- blocks that hash to the same value)
+-  3. fully associative: one set with all the blocks (no hash collision worries)
+-  Least Recently Used (LRU): most ocmmon heuristic where cache block accessed longest time ago is dropped.
+-  
+ 
 #### Memory capacity:
 measured in Bytes (1 Byte is 8 bits)
 -   KB (kilobyte) = 1024 Bytes = 2<sup>10</sup> Bytes
