@@ -132,26 +132,6 @@ Multiplexers (MUX), decoders, Adders, Subtractors, Comparators. Any circuits whe
 | 10                             | w                              |
 | 11                             | x                              |
 
-Verilog code:
-
-```verilog
-module mux_logic( select, d, q );
-
-input[1:0]  select;
-input[3:0]  d;
-output      q;
-
-wire        q;
-wire[1:0]   select;
-wire[3:0]   d;
-
-assign q =  (~select[1] & ~select[0])   & d[0] |
-            (~select[1] & select[0])    & d[1] |
-            (select[1]  & ~select[0])   & d[2] |
-            (select[1]  & select[0])    & d[3] ;
-
-endmodule
-```
 
 #### decoders
 Translate from the output of one circuit to input of another.
@@ -509,63 +489,6 @@ Mealy:
 -   output can change ass soon as the input changes even if state did not change
 -   In state diagram, outputs are drawn on transition
 
-```verilog
-reg [1:0] present_state;
-
-always @ (posedge clk, negedge reset_n)
-begin
-    if (reset_n == 1'b0)
-        present_state <= 2'b00;
-    else
-        present_state <= next_state;
-end
-```
-
-###### Combinational circuit A in verilog
-
-```verilog
-reg [1:0] present_state, next_state;
-
-always @ (*)
-    case (present_state)
-        A: next_state = ...;
-        ...
-        default: next_state = ...;
-    endcase
-```
-
-User symbolic names for states and not hard-coded constants>
-
-```verilog
-localparam [1:0] A = 2'b00, B = 2'b01;
-```
-
-###### State flip-flops
-
-```verilog
-always @ (posedge clock, negedge resetn)
-begin
-    if (resetn == 1'b0)
-        present_state <= A;
-    else
-        present_state <= next_state
-end
-```
-
-`present_state` is outputs `Q` of our flip-flops  
-`next_state` is inputs `D` of out FF (outputs from combinational circuit A)
-
-###### FSM's Outputs (Combinational Circuit B)
-Implement either with assign statements or an `always @(*)` block
-
-On Quartus, use __State Machine Viewer__ to observe state table and state diagram, and user __Technology Map Viewer__ to see function/truth table
-
-###### One-Hot Assignment for FSM
--   need as many FFs as FSM states
--   given `n` FSM states, each state code will have `n-1` bits zero and `1` bit one
--   Simpler, faster logic due to simpler boolean expressions
--   Key points
-    -   uniquely identify any state just by specifying the 1 flip-flop whose output will be high
 
 ### Midterm review
  Assume you have 5 bits, what is the range of numbers you can represent in 2’s complement?  
@@ -587,6 +510,13 @@ Calculate D-to-Y and S-to-Y propagation for each circuit in the comparison.
 
 ### Datapath
 Where all data computations take place
+APPROACH:
+- Figure out data source(s) and destination
+- Determine the path of the data
+- Deduce the signal values that cause this path 
+- -> start with Read and Write signals (only one high at a time)
+- -> then mux signals along the datapath
+- -> non-essential signals get an X value
 
 ### Control unit
 A big FSM that instructs the datapath to perform all appropriate actions.
@@ -596,20 +526,7 @@ A big FSM that instructs the datapath to perform all appropriate actions.
 1.  Identify the various datapath components
 2.  Identify which signals will be FSM inputs, FSM outputs
 3.  Come up with a state diagram/state table
-4.  Implement control components and datapath components in verilog
-
-##### Control Unit Interface
--   System Wide signals
-    -   `clock`
-    -   `resetn`
--   Output datapath control signal
-    -   `SelxA`, `SelAB` => control MUX outputs
-    -   `ALUop` => control ALU operation
-    -   `LdRA`, `LdRB` => load a new value into reg `RA`, `RB`
--   Computation done signal
-    -   `done`
--   Computation start signal
-    -   `go`
+4.  Implement control components and datapath components in verilo
 
 ##### Sequence of Operations
 | Cycle #        | RA             | RB             | Goal                               | SelxA          | SelAB          | ALUop          | LdRA           | LdRB           |
@@ -619,16 +536,6 @@ A big FSM that instructs the datapath to perform all appropriate actions.
 | 3              | x              | x<sup>2</sup>  | Do 2x and replace result in RA     | Don't care     | 0              | 0 (+)          | 1              | 0              |
 | 4              | 0              | 0              | Compute x<sup>2</sup> + 2x (final) | 1              | 1              | 0 (+)          | 0              | 0              |
 
-After:
--   Cycle 1: x loaded to RA, RB
--   Cycle 2: x<sup>2</sup> loaded to RB
--   Cycle 3: 2x loaded to RA
--   Cycle 4: x<sup>2</sup> + 2x calculated
-
-##### `go`
-If want to freeze datapath, change `go` to zero
--   stay in the same state if `go` is logic-0
--   Do not modify contents of registers
 
 ### Microprocessors
 -   Registers to store values
@@ -752,7 +659,7 @@ MIPS instruction types
     -   opcode is 000000
     -   function field (last 6 digit) specifies type of operation being performed
 
--   I-type (immediate?)
+-   I-type (immediate)
     -   a 16-bit immediate field, used for immediate operand, a branch target offset or a displacement for a memory operand
 
 -   J-type
